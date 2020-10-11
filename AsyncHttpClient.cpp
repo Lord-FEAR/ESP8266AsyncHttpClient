@@ -100,35 +100,35 @@ void AsyncHttpClient::getHostname(String url)
 
 void AsyncHttpClient::send()
 {
-    Serial.println("Type: " + _type + " URL: " + _fullUrl + " DataMode: " + _dataMode + " Data: " + _data);
+    //Serial.println("Type: " + _type + " URL: " + _fullUrl + " DataMode: " + _dataMode + " Data: " + _data);
 
     if (_hostname.length() <= 0) {
-		Serial.println("Hostname is not defined");
+		//Serial.println("Hostname is not defined");
 		return;
 	}
 
     if (_port <= 0) {
-		Serial.println("Port is not defined");
+		//Serial.println("Port is not defined");
 		return;
 	}
 
     if (_type.length() <= 0) {
-		Serial.println("Type is not defined (Only GET or POST)");
+		//Serial.println("Type is not defined (Only GET or POST)");
 		return;
 	}
 
     if (_fullUrl.length() <= 0) {
-		Serial.println("URL is not defined");
+		//Serial.println("URL is not defined");
 		return;
 	}
 
-    if (_dataMode.length() <= 0) {
-		Serial.println("DataMode is not defined");
+    if (_dataMode.length() <= 0 && _type!="GET") {
+		//Serial.println("DataMode is not defined");
 		return;
 	}
 
-    if (_data.length() <= 0) {
-		Serial.println("Data is not defined");
+    if (_data.length() <= 0 && _type!="GET") {
+		//Serial.println("Data is not defined");
 		return;
 	}
 
@@ -140,28 +140,28 @@ void AsyncHttpClient::send()
         return;
 
     aClient->onError([&](void *arg, AsyncClient *client, int error) {
-        Serial.println("Connect Error");
+        //Serial.println("Connect Error");
         aClient = NULL;
         delete client;
     },NULL);
 
     aClient->onConnect([&](void *arg, AsyncClient *client) {
-        Serial.println("Connected");
+        //Serial.println("Connected");
         aClient->onError(NULL, NULL);
 
         client->onDisconnect([&](void *arg, AsyncClient *c) {
-            Serial.println("Disconnected");
+            //Serial.println("Disconnected");
             aClient = NULL;
             delete c;
         },NULL);
 
-        client->onData([&](void *arg, AsyncClient *c, void *data, size_t len) {
+        /*  client->onData([&](void *arg, AsyncClient *c, void *data, size_t len) {
             Serial.print("\r\nResponse: ");
             Serial.println(len);
             uint8_t *d = (uint8_t *)data;
             for (size_t i = 0; i < len; i++)
                 Serial.write(d[i]);
-        },NULL);
+        },NULL); */
 
         //send the request
         String PostHeader;
@@ -178,7 +178,7 @@ void AsyncHttpClient::send()
 
     if (!aClient->connect(_hostname.c_str(), _port))
     {
-        Serial.println("Connect Fail");
+        //Serial.println("Connect Fail");
         AsyncClient *client = aClient;
         aClient = NULL;
         delete client;
